@@ -1,325 +1,130 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TIGREBET - Cassino Online</title>
-<style>
-  /* Reset básico */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #000000; /* preto total */
-    color: #f3f3f3;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-  header {
-    background: #ff6a00; /* laranja vibrante */
-    padding: 1.2rem;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #000;
-    box-shadow: 0 4px 8px rgba(255, 106, 0, 0.6);
-  }
-  main {
-    max-width: 420px;
-    margin: 3rem auto;
-    background: #121212;
-    border-radius: 12px;
-    padding: 2rem 2.5rem;
-    box-shadow: 0 0 20px #ff6a00aa;
-  }
-  h2, h3 {
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    margin-bottom: 1rem;
-  }
-  input, button {
-    font-size: 1.1rem;
-    padding: 0.75rem 1rem;
-    margin: 0.6rem 0;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    width: 100%;
-    font-weight: 600;
-    transition: all 0.25s ease;
-  }
-  input {
-    background: #222222;
-    color: #eee;
-  }
-  input::placeholder {
-    color: #bbb;
-  }
-  button {
-    background: #ff6a00;
-    color: #000;
-    cursor: pointer;
-    font-weight: 900;
-    text-transform: uppercase;
-    box-shadow: 0 4px 8px #ff6a00cc;
-  }
-  button:hover {
-    background: #e65a00;
-    box-shadow: 0 6px 12px #e65a00dd;
-  }
-  a {
-    color: #ff6a00;
-    text-decoration: none;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-  .hidden {
-    display: none;
-  }
-  #slot-reels {
-    font-size: 4rem;
-    margin: 1.5rem 0 2rem 0;
-    letter-spacing: 0.4rem;
-    user-select: none;
-  }
-  #balance {
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-    color: #ff6a00;
-    text-shadow: 0 0 6px #ff6a00bb;
-  }
-  #message {
-    min-height: 1.8em;
-    margin: 1.5rem 0 0 0;
-    font-weight: 700;
-    text-shadow: 0 0 6px #ff6a00bb;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>TIGREBET - Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #ff9900; /* cor "tigre" */
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #ff9900;
+    }
+    #login-screen, #lobby {
+      background: #222;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
+      width: 320px;
+      text-align: center;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 12px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #ff9900;
+      border: none;
+      padding: 12px 20px;
+      color: #121212;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #cc7a00;
+    }
+    #login-error {
+      color: #ff4444;
+      margin-top: 10px;
+      height: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    #welcome-msg {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
 
-<header>TIGREBET</header>
+  <h1>TIGREBET</h1>
 
-<main>
+  <!-- Tela Login/Cadastro -->
+  <div id="login-screen">
+    <h2>Faça seu login</h2>
+    <input type="text" id="username" placeholder="Usuário" autocomplete="off" />
+    <input type="password" id="password" placeholder="Senha" autocomplete="off" />
+    <button id="login-btn">Entrar</button>
+    <p id="login-error"></p>
+  </div>
 
-<!-- Login / Registro -->
-<section id="auth-section">
-  <h2>Login</h2>
-  <input type="text" id="inputUsername" placeholder="Usuário" autocomplete="username" />
-  <input type="password" id="inputPassword" placeholder="Senha" autocomplete="current-password" />
-  <button id="btnLogin">Entrar</button>
-  <p>Ou <a href="#" id="showRegister">Registrar-se</a></p>
-  <div id="authMessage" style="color:#ff6a00;"></div>
-</section>
+  <!-- Tela Lobby -->
+  <div id="lobby" class="hidden">
+    <h2>Lobby TIGREBET</h2>
+    <p id="welcome-msg"></p>
+    <button id="logout-btn">Sair</button>
+  </div>
 
-<section id="register-section" class="hidden">
-  <h2>Registrar</h2>
-  <input type="text" id="regUsername" placeholder="Novo usuário" autocomplete="username" />
-  <input type="password" id="regPassword" placeholder="Nova senha" autocomplete="new-password" />
-  <button id="btnRegister">Registrar</button>
-  <p>Já tem conta? <a href="#" id="showLogin">Entrar</a></p>
-  <div id="registerMessage" style="color:#ff6a00;"></div>
-</section>
+  <script>
+    const loginScreen = document.getElementById('login-screen');
+    const lobby = document.getElementById('lobby');
+    const welcomeMsg = document.getElementById('welcome-msg');
+    const loginError = document.getElementById('login-error');
 
-<!-- Cassino -->
-<section id="casino-section" class="hidden">
-  <h2>Bem-vindo, <span id="displayUser"></span>!</h2>
-  <div id="balance">Saldo: R$ 0,00</div>
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
 
-  <input type="number" id="inputAmount" placeholder="Valor (R$)" min="1" />
-  <button id="btnDeposit">Depositar</button>
-  <button id="btnWithdraw">Sacar</button>
+    // Usuário fixo para demo
+    const validUser = {
+      username: 'tigreuser',
+      password: 'senha123'
+    };
 
-  <div id="message"></div>
+    loginBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-  <hr style="margin: 2rem 0; border-color: #ff6a00cc;" />
+      if (username === validUser.username && password === validUser.password) {
+        loginScreen.classList.add('hidden');
+        lobby.classList.remove('hidden');
+        welcomeMsg.textContent = `Bem-vindo(a), ${username}! Prepare-se para ganhar no TIGREBET 🐅🎰`;
+        loginError.textContent = '';
+      } else {
+        loginError.textContent = 'Usuário ou senha inválidos.';
+      }
+    });
 
-  <h3>Jogo de Slot Machine</h3>
-  <div id="slot-reels">🍒 🍋 🍊</div>
-  <button id="btnSpin">Girar (Aposta: R$10)</button>
-</section>
-
-</main>
-
-<script>
-  // Simulação do backend - troca aqui para API real depois
-  let currentUser = null;
-  let balance = 0;
-
-  const authSection = document.getElementById('auth-section');
-  const registerSection = document.getElementById('register-section');
-  const casinoSection = document.getElementById('casino-section');
-
-  const authMessage = document.getElementById('authMessage');
-  const registerMessage = document.getElementById('registerMessage');
-  const message = document.getElementById('message');
-
-  const displayUser = document.getElementById('displayUser');
-  const balanceDisplay = document.getElementById('balance');
-  const slotReels = document.getElementById('slot-reels');
-
-  // Alternar telas
-  document.getElementById('showRegister').addEventListener('click', (e) => {
-    e.preventDefault();
-    authSection.classList.add('hidden');
-    registerSection.classList.remove('hidden');
-    authMessage.textContent = '';
-    registerMessage.textContent = '';
-  });
-  document.getElementById('showLogin').addEventListener('click', (e) => {
-    e.preventDefault();
-    registerSection.classList.add('hidden');
-    authSection.classList.remove('hidden');
-    authMessage.textContent = '';
-    registerMessage.textContent = '';
-  });
-
-  async function fakeRegister(username, password) {
-    await new Promise(r => setTimeout(r, 500));
-    const users = JSON.parse(localStorage.getItem('users')) || {};
-    if(users[username]) throw new Error('Usuário já existe');
-    users[username] = { password, balance: 0 };
-    localStorage.setItem('users', JSON.stringify(users));
-  }
-
-  async function fakeLogin(username, password) {
-    await new Promise(r => setTimeout(r, 500));
-    const users = JSON.parse(localStorage.getItem('users')) || {};
-    if(!users[username]) throw new Error('Usuário não encontrado');
-    if(users[username].password !== password) throw new Error('Senha incorreta');
-    return users[username];
-  }
-
-  function updateBalanceUI() {
-    balanceDisplay.textContent = `Saldo: R$ ${balance.toFixed(2).replace('.', ',')}`;
-  }
-
-  function saveUserBalance() {
-    const users = JSON.parse(localStorage.getItem('users')) || {};
-    users[currentUser].balance = balance;
-    localStorage.setItem('users', JSON.stringify(users));
-  }
-
-  document.getElementById('btnLogin').addEventListener('click', async () => {
-    const username = document.getElementById('inputUsername').value.trim();
-    const password = document.getElementById('inputPassword').value;
-    authMessage.style.color = '#ff6a00';
-    if(!username || !password) {
-      authMessage.textContent = 'Preencha usuário e senha';
-      return;
-    }
-    try {
-      const user = await fakeLogin(username, password);
-      currentUser = username;
-      balance = user.balance;
-      displayUser.textContent = currentUser;
-      updateBalanceUI();
-      authSection.classList.add('hidden');
-      casinoSection.classList.remove('hidden');
-      authMessage.textContent = '';
-    } catch(e) {
-      authMessage.textContent = e.message;
-    }
-  });
-
-  document.getElementById('btnRegister').addEventListener('click', async () => {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    registerMessage.style.color = '#ff6a00';
-    if(!username || !password) {
-      registerMessage.textContent = 'Preencha usuário e senha';
-      return;
-    }
-    try {
-      await fakeRegister(username, password);
-      registerMessage.style.color = '#8f8';
-      registerMessage.textContent = 'Registrado com sucesso! Faça login.';
-    } catch(e) {
-      registerMessage.style.color = '#ff6a00';
-      registerMessage.textContent = e.message;
-    }
-  });
-
-  document.getElementById('btnDeposit').addEventListener('click', () => {
-    const amt = parseFloat(document.getElementById('inputAmount').value);
-    message.style.color = '#ff6a00';
-    if(isNaN(amt) || amt <= 0) {
-      message.textContent = 'Digite um valor válido para depósito';
-      return;
-    }
-    balance += amt;
-    saveUserBalance();
-    updateBalanceUI();
-    message.style.color = '#8f8';
-    message.textContent = `Depósito de R$ ${amt.toFixed(2).replace('.', ',')} realizado!`;
-  });
-
-  document.getElementById('btnWithdraw').addEventListener('click', () => {
-    const amt = parseFloat(document.getElementById('inputAmount').value);
-    message.style.color = '#ff6a00';
-    if(isNaN(amt) || amt <= 0) {
-      message.textContent = 'Digite um valor válido para saque';
-      return;
-    }
-    if(amt > balance) {
-      message.textContent = 'Saldo insuficiente';
-      return;
-    }
-    balance -= amt;
-    saveUserBalance();
-    updateBalanceUI();
-    message.style.color = '#8f8';
-    message.textContent = `Saque de R$ ${amt.toFixed(2).replace('.', ',')} realizado!`;
-  });
-
-  const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '7️⃣'];
-
-  function spinSlots() {
-    message.textContent = '';
-    if(balance < 10) {
-      message.style.color = '#ff6a00';
-      message.textContent = 'Saldo insuficiente para apostar R$10';
-      return;
-    }
-    balance -= 10;
-    updateBalanceUI();
-    const result = [];
-    for(let i=0; i<3; i++) {
-      const idx = Math.floor(Math.random()*symbols.length);
-      result.push(symbols[idx]);
-    }
-    slotReels.textContent = result.join(' ');
-
-    // Regras simples
-    let winnings = 0;
-    if(result[0] === result[1] && result[1] === result[2]) {
-      winnings = 100;
-    } else if(result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
-      winnings = 30;
-    }
-
-    if(winnings > 0) {
-      balance += winnings;
-      saveUserBalance();
-      updateBalanceUI();
-      message.style.color = '#8f8';
-      message.textContent = `Você ganhou R$ ${winnings.toFixed(2).replace('.', ',')}! 🎉`;
-    } else {
-      message.style.color = '#ff6a00';
-      message.textContent = 'Não ganhou dessa vez. Tente novamente!';
-    }
-  }
-
-  document.getElementById('btnSpin').addEventListener('click', spinSlots);
-</script>
+    logoutBtn.addEventListener('click', () => {
+      lobby.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      loginError.textContent = '';
+    });
+  </script>
 
 </body>
 </html>
+
 
