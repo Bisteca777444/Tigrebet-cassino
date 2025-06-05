@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cassino Online - Frontend</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1b1b2f;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  header {
+    background: #16213e;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  main {
+    padding: 1rem;
+    max-width: 400px;
+    margin: 2rem auto;
+    background: #0f3460;
+    border-radius: 8px;
+  }
+  input, button {
+    font-size: 1rem;
+    padding: 0.7rem;
+    margin: 0.5rem 0;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+  }
+  input {
+    box-sizing: border-box;
+  }
+  button {
+    background: #e94560;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #d63447;
+  }
+  .hidden {
+    display: none;
+  }
+  #slot-reels {
+    font-size: 3rem;
+    margin: 1rem 0;
+  }
+  #balance {
+    font-size: 1.3rem;
+    margin: 1rem 0;
+  }
+  #message {
+    min-height: 1.5em;
+    margin: 1rem 0;
+    color: #ffd700;
+  }
+</style>
+</head>
+<body>
+
+<header>Cassino Online</header>
+
+<main>
+
+<!-- Login / Registro -->
+<section id="auth-section">
+  <h2>Login</h2>
+  <input type="text" id="inputUsername" placeholder="Usuário" autocomplete="username" />
+  <input type="password" id="inputPassword" placeholder="Senha" autocomplete="current-password" />
+  <button id="btnLogin">Entrar</button>
+  <p>Ou <a href="#" id="showRegister">Registrar-se</a></p>
+  <div id="authMessage" style="color:#ff6961;"></div>
+</section>
+
+<section id="register-section" class="hidden">
+  <h2>Registrar</h2>
+  <input type="text" id="regUsername" placeholder="Novo usuário" autocomplete="username" />
+  <input type="password" id="regPassword" placeholder="Nova senha" autocomplete="new-password" />
+  <button id="btnRegister">Registrar</button>
+  <p>Já tem conta? <a href="#" id="showLogin">Entrar</a></p>
+  <div id="registerMessage" style="color:#ff6961;"></div>
+</section>
+
+<!-- Cassino -->
+<section id="casino-section" class="hidden">
+  <h2>Bem-vindo, <span id="displayUser"></span>!</h2>
+  <div id="balance">Saldo: R$ 0,00</div>
+
+  <input type="number" id="inputAmount" placeholder="Valor (R$)" min="1" />
+  <button id="btnDeposit">Depositar</button>
+  <button id="btnWithdraw">Sacar</button>
+
+  <div id="message"></div>
+
+  <hr style="margin: 2rem 0;" />
+
+  <h3>Jogo de Slot Machine</h3>
+  <div id="slot-reels">🍒 🍋 🍊</div>
+  <button id="btnSpin">Girar (Aposta: R$10)</button>
+</section>
+
+</main>
+
+<script>
+  // Simulação do backend: armazenar dados localmente só para mostrar interface
+  // Aqui você vai trocar as funções para se comunicar com backend real depois
+
+  let currentUser = null;
+  let balance = 0;
+
+  const authSection = document.getElementById('auth-section');
+  const registerSection = document.getElementById('register-section');
+  const casinoSection = document.getElementById('casino-section');
+
+  const authMessage = document.getElementById('authMessage');
+  const registerMessage = document.getElementById('registerMessage');
+  const message = document.getElementById('message');
+
+  const displayUser = document.getElementById('displayUser');
+  const balanceDisplay = document.getElementById('balance');
+  const slotReels = document.getElementById('slot-reels');
+
+  // Mudar entre telas
+  document.getElementById('showRegister').addEventListener('click', (e) => {
+    e.preventDefault();
+    authSection.classList.add('hidden');
+    registerSection.classList.remove('hidden');
+    authMessage.textContent = '';
+    registerMessage.textContent = '';
+  });
+  document.getElementById('showLogin').addEventListener('click', (e) => {
+    e.preventDefault();
+    registerSection.classList.add('hidden');
+    authSection.classList.remove('hidden');
+    authMessage.textContent = '';
+    registerMessage.textContent = '';
+  });
+
+  // Simula chamada backend - registra usuário
+  async function fakeRegister(username, password) {
+    // Simula delay
+    await new Promise(r => setTimeout(r, 500));
+
+    // Aqui trocar para chamada real API (fetch POST)
+    // Exemplo:
+    // const res = await fetch('/api/register', {...})
+
+    // Por enquanto salva no localStorage só para mostrar
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+    if(users[username]) throw new Error('Usuário já existe');
+    users[username] = { password, balance: 0 };
+    localStorage.setItem('users', JSON.stringify(users));
+  }
+
+  // Simula login
+  async function fakeLogin(username, password) {
+    await new Promise(r => setTimeout(r, 500));
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+    if(!users[username]) throw new Error('Usuário não encontrado');
+    if(users[username].password !== password) throw new Error('Senha incorreta');
+    return users[username];
+  }
+
+  // Atualiza saldo e interface cassino
+  function updateBalanceUI() {
+    balanceDisplay.textContent = `Saldo: R$ ${balance.toFixed(2).replace('.', ',')}`;
+  }
+
+  // Atualiza saldo no localStorage
+  function saveUserBalance() {
+    const users = JSON.parse(localStorage.getItem('users')) || {};
+    users[currentUser].balance = balance;
+    localStorage.setItem('users', JSON.stringify(users));
+  }
+
+  // Login
+  document.getElementById('btnLogin').addEventListener('click', async () => {
+    const username = document.getElementById('inputUsername').value.trim();
+    const password = document.getElementById('inputPassword').value;
+    authMessage.style.color = '#ff6961';
+    if(!username || !password) {
+      authMessage.textContent = 'Preencha usuário e senha';
+      return;
+    }
+    try {
+      const user = await fakeLogin(username, password);
+      currentUser = username;
+      balance = user.balance;
+      displayUser.textContent = currentUser;
+      updateBalanceUI();
+      authSection.classList.add('hidden');
+      casinoSection.classList.remove('hidden');
+      authMessage.textContent = '';
+    } catch(e) {
+      authMessage.textContent = e.message;
+    }
+  });
+
+  // Registro
+  document.getElementById('btnRegister').addEventListener('click', async () => {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    registerMessage.style.color = '#ff6961';
+    if(!username || !password) {
+      registerMessage.textContent = 'Preencha usuário e senha';
+      return;
+    }
+    try {
+      await fakeRegister(username, password);
+      registerMessage.style.color = '#8f8';
+      registerMessage.textContent = 'Registrado com sucesso! Faça login.';
+    } catch(e) {
+      registerMessage.textContent = e.message;
+    }
+  });
+
+  // Depósito
+  document.getElementById('btnDeposit').addEventListener('click', () => {
+    const amt = parseFloat(document.getElementById('inputAmount').value);
+    message.style.color = '#ff6961';
+    if(isNaN(amt) || amt <= 0) {
+      message.textContent = 'Digite um valor válido para depósito';
+      return;
+    }
+    // Aqui você deve chamar API real para processar pagamento
+    // Por enquanto só atualiza saldo local
+    balance += amt;
+    saveUserBalance();
+    updateBalanceUI();
+    message.style.color = '#8f8';
+    message.textContent = `Depósito de R$ ${amt.toFixed(2).replace('.', ',')} realizado!`;
+  });
+
+  // Saque
+  document.getElementById('btnWithdraw').addEventListener('click', () => {
+    const amt = parseFloat(document.getElementById('inputAmount').value);
+    message.style.color = '#ff6961';
+    if(isNaN(amt) || amt <= 0) {
+      message.textContent = 'Digite um valor válido para saque';
+      return;
+    }
+    if(amt > balance) {
+      message.textContent = 'Saldo insuficiente';
+      return;
+    }
+    // Aqui você deve chamar API real para processar saque
+    balance -= amt;
+    saveUserBalance();
+    updateBalanceUI();
+    message.style.color = '#8f8';
+    message.textContent = `Saque de R$ ${amt.toFixed(2).replace('.', ',')} realizado!`;
+  });
+
+  // Jogo de slot machine básico
+  const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '🎰'];
+
+  function spinSlots() {
+    if(balance < 10) {
+      message.style.color = '#ff6961';
+      message.textContent = 'Saldo insuficiente para apostar R$10,00';
+      return;
+    }
+    balance -= 10;
+    saveUserBalance();
+    updateBalanceUI();
+
+    // Gira os 3 símbolos
+    let result = [];
+    for(let i=0; i<3; i++) {
+      const idx = Math.floor(Math.random() * symbols.length);
+      result.push(symbols[idx]);
+    }
+    slotReels.textContent = result.join(' ');
+
+    // Verifica vitória simples: 3 iguais ganham 50, 2 iguais ganham 20
+    let winnings = 0;
+    if(result[0] === result[1] && result[1] === result[2]) {
+      winnings = 50;
+    } else if(result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
+      winnings = 20;
+    }
+
+    if(winnings > 0) {
+      balance += winnings;
+      saveUserBalance();
+      updateBalanceUI();
+      message.style.color = '#8f8';
+      message.textContent = `Você ganhou R$ ${winnings.toFixed(2).replace('.', ',')}! 🎉`;
+    } else {
+      message.style.color = '#ff6961';
+      message.textContent = 'Não ganhou dessa vez. Tente novamente!';
+    }
+  }
+
+  document.getElementById('btnSpin').addEventListener('click', spinSlots);
+
+</script>
+
+</body>
+</html>
